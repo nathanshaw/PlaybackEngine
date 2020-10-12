@@ -2,7 +2,7 @@
 #define __PLAYBACK_ENGINE_H__
 
 #include "Rhythm.h"
-#include "../Mechanisms/Mechanisms.h"
+#include <Mechanisms.h>
 #include <NeopixelManager.h>
 
 class PlaybackEngine {
@@ -10,11 +10,12 @@ class PlaybackEngine {
       PlaybackEngine();
       void playRhythm(Rhythm * r);
       void update();
-      void linkBellMechanism(BellMechanism * m);
-      void linkPeckerMechanism(Woodpecker * m);
+      void linkMechanism(BellMechanism * m);
+      void linkMechanism(Woodpecker * m);
       void linkNeoGroup(NeoGroup * n);
       bool isActive(){return playback_active;};
       // void addSolenoidMechanism(uint8_t act, uint8_t damp);
+      void setFeedbackColor(uint8_t r, uint8_t g, uint8_t b);
       
     private:
       void updateBells();
@@ -43,18 +44,24 @@ PlaybackEngine::PlaybackEngine(){
 
 }
 
+void PlaybackEngine::setFeedbackColor(uint8_t r, uint8_t g, uint8_t b) {
+    red = r;
+    green = g;
+    blue = b;
+}
+
 void PlaybackEngine::linkNeoGroup(NeoGroup *n) {
     neos[num_neos] = n;
     num_neos++;
 }
 
-void PlaybackEngine::linkBellMechanism(BellMechanism * m) {
+void PlaybackEngine::linkMechanism(BellMechanism * m) {
     bell_mechanisms[num_bell_mechanisms] = m;
     num_bell_mechanisms++;
     bells_active = true;
 }
 
-void PlaybackEngine::linkPeckerMechanism(Woodpecker * m) {
+void PlaybackEngine::linkMechanism(Woodpecker * m) {
     woodpeckers[num_woodpecker_mechanisms] = m;
     num_woodpecker_mechanisms++;
     woodpeckers_active = true;

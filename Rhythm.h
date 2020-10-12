@@ -25,11 +25,17 @@ class Rhythm {
     public:
         Rhythm();
 
-        void addNote(double freq, uint32_t length, uint32_t onset, double velocity);
-        void addStrike(uint32_t onset, double velocity);
+        // Add notes
+        void addPitchedNote(double freq, uint32_t length, uint32_t onset, double velocity);
+        void addUnpitchedNote(uint32_t onset, double velocity);
         void addDampenedNote(double freq, uint32_t onset, double velocity);
         void addMotorMove(uint16_t which, uint16_t len, uint32_t onset);
 
+        // replace notes
+        // TODO
+
+        // remove notes
+        // TODO
         void nextNote();
         void setCurrentNote(uint8_t n){current_note = n;};
 
@@ -50,7 +56,13 @@ class Rhythm {
     private:
         // number of notes stored in the rhythm
         uint8_t num_notes = 0;
+        // which note is currently sounding?
+        uint8_t current_note = 0;
         // approx freq of notes
+        double median_freq = 0.0;
+        // is the class currently active?
+        bool active = false;
+
         double freqs[RHYTHM_MAX_NOTES];
         // how long should the notes ring for (think of the bells)
         uint32_t lengths[RHYTHM_MAX_NOTES];
@@ -68,11 +80,7 @@ class Rhythm {
         uint8_t note_type[RHYTHM_MAX_NOTES];
 
         bool damp_on[RHYTHM_MAX_NOTES];
-        // is the class currently active?
-        bool active = false;
-        // which note is currently sounding?
-        uint8_t current_note = 0;
-        double median_freq = 0.0;
+
 };
 
 Rhythm::Rhythm() {
@@ -128,13 +136,14 @@ void Rhythm::addMotorMove(uint16_t which, uint16_t length, uint32_t onset) {
 }
 
 
-void Rhythm::addNote(double freq, uint32_t length, uint32_t onset, double velocity) {
+void Rhythm::addPitchedNote(double freq, uint32_t length, uint32_t onset, double velocity) {
     note_type[num_notes] = NOTE_TYPE_PITCHED;
     freqs[num_notes] = freq;
     lengths[num_notes] = length;
     onset_times[num_notes] = onset;
     velocitys[num_notes] = velocity * velocity;
     num_notes++;
+    // TODO - this needs to be recalculated now that unpitched notes are an option
     double freq_t = 0.0;
     for (int i = 0; i < num_notes; i++) {
         freq_t += freqs[i];
@@ -142,7 +151,7 @@ void Rhythm::addNote(double freq, uint32_t length, uint32_t onset, double veloci
     median_freq = freq_t / num_notes;
 }
 
-void Rhythm::addStrike(uint32_t onset, double velocity) {
+void Rhythm::addUnpitchedNote(uint32_t onset, double velocity) {
     note_type[num_notes] = NOTE_TYPE_PERCUSSIVE;
     freqs[num_notes] = 20000;
     lengths[num_notes] = 20 + (velocity * 30);
@@ -169,6 +178,7 @@ class RhythmBank {
     public:
        RhythmBank();
        void addRhythm(Rhythm * r);
+       void removeRhythm(uint8_t idx);
        // get the index of the rhythm which contains a medium freq closest to the given freq
        Rhythm* getRhythmFromPitch(double freq);
        Rhythm* getRandomRhythm();
@@ -201,6 +211,10 @@ Rhythm* RhythmBank::getRandomRhythm() {
 void RhythmBank::addRhythm(Rhythm * r) {
     rhythms[num_rhythms] = r;
     num_rhythms++;
+}
+
+void RhythmBank::removeRhythm(uint8_t idx) {
+    Serial.println("WARNING -- removeRhyth() is not yet implemented");
 }
 
 Rhythm* RhythmBank::getRhythmFromPitch(double freq) {
