@@ -11,7 +11,7 @@ class PlaybackEngine {
       void playRhythm(Rhythm * r);
       void update();
       void linkMechanism(BellMechanism * m);
-      void linkMechanism(Woodpecker * m);
+      void linkMechanism(WoodpeckerMechanism * m);
       void linkNeoGroup(NeoGroup * n);
       bool isActive(){return playback_active;};
       // void addSolenoidMechanism(uint8_t act, uint8_t damp);
@@ -22,7 +22,7 @@ class PlaybackEngine {
       void updateWoodpeckers();
 
       BellMechanism * bell_mechanisms[3];
-      Woodpecker * woodpeckers[3];
+      WoodpeckerMechanism * woodpecker_mechanisms[3];
       NeoGroup * neos[3];
 
       uint8_t num_bell_mechanisms = 0;
@@ -61,8 +61,8 @@ void PlaybackEngine::linkMechanism(BellMechanism * m) {
     bells_active = true;
 }
 
-void PlaybackEngine::linkMechanism(Woodpecker * m) {
-    woodpeckers[num_woodpecker_mechanisms] = m;
+void PlaybackEngine::linkMechanism(WoodpeckerMechanism * m) {
+    woodpecker_mechanisms[num_woodpecker_mechanisms] = m;
     num_woodpecker_mechanisms++;
     woodpeckers_active = true;
 }
@@ -108,13 +108,13 @@ void PlaybackEngine::updateWoodpeckers() {
     for (int i = 0; i < num_woodpecker_mechanisms; i++) {
         if (rhythm->getNoteType() == NOTE_TYPE_MOTOR) {
             Serial.println("CALLING rotate() on the woodpecker class");
-            woodpeckers[i]->rotate(rhythm->getLength());
+            woodpecker_mechanisms[i]->rotate(rhythm->getLength());
             rhythm->nextNote();
             last_onset = 0;
         }
         else {
-            woodpeckers[i]->queueStrike(rhythm->getVelocity());
-            if (woodpeckers[i]->strike()) {
+            woodpecker_mechanisms[i]->queueStrike(rhythm->getVelocity());
+            if (woodpecker_mechanisms[i]->strike()) {
                 rhythm->nextNote();
                 last_onset = 0;
             }
@@ -130,7 +130,7 @@ void PlaybackEngine::update() {
         bell_mechanisms[i]->update();
     }
     for (int i = 0; i < num_woodpecker_mechanisms; i++) {
-        woodpeckers[i]->update();
+        woodpecker_mechanisms[i]->update();
     }
 
     if (!playback_active) {
