@@ -3,7 +3,7 @@
 
 #include "Rhythm.h"
 #include <Mechanisms.h>
-#include <NeopixelManager.h>
+#include "../NeopixelManager/NeopixelManager.h"
 
 class PlaybackEngine {
     public:
