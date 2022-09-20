@@ -104,7 +104,7 @@ void PlaybackEngine::updateBells() {
 }
 
 void PlaybackEngine::updateWoodpeckers() {
-    // TODO , need logic to determine which pecker to choose
+    // TODO , need logic to determine which pecking_mechanism to choose
     for (int i = 0; i < num_woodpecker_mechanisms; i++) {
         if (rhythm->getNoteType() == NOTE_TYPE_MOTOR) {
             Serial.println("CALLING rotate() on the woodpecker class");
